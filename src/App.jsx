@@ -12,7 +12,7 @@ export default function App() {
       return
     }
 
-    if (priority === "select") {
+    if (!priority) {
       alert("Please select a priority")
       return
     }
@@ -32,7 +32,25 @@ export default function App() {
     setTasks(tasks.filter(task => task.id !== id))
   }
 
-  return (
+  const priorityOrder = {
+    urgent: 3,
+    important: 2,
+    "not-urgent": 1
+  }
+
+  const [sortType, setSortType] = useState("none")
+
+  let sortedTasks = [...tasks]
+
+  if (sortType === "Low") {
+    sortedTasks.sort((a, b) => {return priorityOrder[b.priority] - priorityOrder[a.priority]})
+  }
+
+  if (sortType === "High") {
+    sortedTasks.sort((a, b) => {return priorityOrder[a.priority] - priorityOrder[b.priority]})
+  }
+
+    return (
     <>
       <div className="my-2"><h1 className="text-gray-600">Task List</h1></div>
       <div className=" max-w-full h-full flex flex-row items-center gap-4">
@@ -50,9 +68,14 @@ export default function App() {
           </select>
 
           <button onClick={handleAddTask} className=" bg-gray-800 w-20 h-8 border-2 border-gray-400 rounded-xl hover:border-gray-500">Submit</button>
-        </div>
-        <div className=" w-full h-fit p-4 bg-gray-900 rounded-xl flex flex-col gap-4 overflow-y-auto">
-          {tasks.map(task =>
+          </div>
+          <div className=" w-full h-fit p-4 bg-gray-900 rounded-xl flex flex-col gap-4 overflow-y-auto">
+            <div className="flex gap-2">
+              <button onClick={() => setSortType("High")} className=" bg-gray-800 w-30 h-8 border-2 border-gray-400 rounded-xl hover:border-gray-500">low to high</button>
+              <button onClick={() => setSortType("Low")} className=" bg-gray-800 w-30 h-8 border-2 border-gray-400 rounded-xl hover:border-gray-500">high to low</button>
+              <button onClick={() => setSortType("none")} className=" bg-gray-800 w-30 h-8 border-2 border-gray-400 rounded-xl hover:border-gray-500">Default</button>
+            </div>
+          {sortedTasks.map(task =>
             <Card key={task.id} description={task.text} onDelete={handleDeleteTask} priority={task.priority} id={task.id} />
           )}
         </div>
