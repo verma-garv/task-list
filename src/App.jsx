@@ -1,8 +1,16 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Card from "./components/Card.jsx"
 
 export default function App() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState(() => {
+    const saved = localStorage.getItem("tasks")
+    return saved ? JSON.parse(saved) : []
+  })
+
+  useEffect(() => {
+    localStorage.setItem("tasks", JSON.stringify(tasks))
+  }, [tasks])
+
   const [input, setInput] = useState("")
   const [priority, setPriority] = useState("")
 
@@ -42,11 +50,11 @@ export default function App() {
 
   let sortedTasks = [...tasks]
 
-  if (sortType === "Low") {
+  if (sortType === "High") {
     sortedTasks.sort((a, b) => {return priorityOrder[b.priority] - priorityOrder[a.priority]})
   }
 
-  if (sortType === "High") {
+  if (sortType === "Low") {
     sortedTasks.sort((a, b) => {return priorityOrder[a.priority] - priorityOrder[b.priority]})
   }
 
